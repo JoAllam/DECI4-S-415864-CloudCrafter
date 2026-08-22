@@ -1,0 +1,25 @@
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: cloudcrafter-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,lambda
+      - DEBUG=0
+      - AWS_DEFAULT_REGION=us-east-1
+      - LOCALSTACK_HOST=localhost.localstack.cloud:4566
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:-}
+      - NOTIFICATION_ENDPOINT=http://host.docker.internal:3004/notify
+    volumes:
+      - ./lambda:/lambda
+      - /var/run/docker.sock:/var/run/docker.sock
+      - localstack-data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4566/_localstack/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  localstack-data:

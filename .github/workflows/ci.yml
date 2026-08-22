@@ -1,0 +1,38 @@
+name: CloudCrafter CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install service dependencies
+        run: |
+          for dir in services/*; do
+            if [ -f "$dir/package.json" ]; then
+              npm install --prefix "$dir"
+            fi
+          done
+
+      - name: Validate syntax
+        run: |
+          for dir in services/*; do
+            if [ -f "$dir/server.js" ]; then
+              node --check "$dir/server.js"
+            fi
+          done
+
+      - name: Package release version
+        run: echo "RELEASE_TAG=v1.0.0" >> $GITHUB_ENV

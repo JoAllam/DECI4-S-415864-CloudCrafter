@@ -1,0 +1,1 @@
+{"statusCode":200,"body":"{\"ok\":true,\"message\":\"ticket ready\",\"payload\":{\"ticket\":{\"id\":42,\"userId\":7},\"message\":\"ticket ready\"},\"notification\":{\"statusCode\":201,\"body\":{\"id\":1,\"message\":\"ticket ready\",\"userId\":7,\"sentAt\":\"2026-08-22T06:40:24.669Z\"}}}"}

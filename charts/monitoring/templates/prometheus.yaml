@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: {{ .Values.prometheus.image | quote }}
+          ports:
+            - containerPort: {{ .Values.prometheus.port }}
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+          volumeMounts:
+            - name: prom-config
+              mountPath: /etc/prometheus
+      volumes:
+        - name: prom-config
+          configMap:
+            name: prometheus-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: {{ .Values.prometheus.port }}
+      targetPort: {{ .Values.prometheus.port }}
+  type: {{ .Values.prometheus.serviceType }}

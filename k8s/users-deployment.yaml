@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: users:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: jwt-keys
+              mountPath: /app/private.key
+              subPath: private.key
+              readOnly: true
+            - name: jwt-keys
+              mountPath: /app/public.key
+              subPath: public.key
+              readOnly: true
+      volumes:
+        - name: jwt-keys
+          secret:
+            secretName: users-jwt-keys
